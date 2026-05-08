@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ & Support - TraditionalBrew Sake Brewery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === RESET & CORE === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        /* === THEME VARIABLES === */
+        :root {
+            --bg-color: #F8FAFC;
+            --bg-secondary: #F1F5F9; 
+            --bg-card: #FFFFFF; 
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --accent-color: #2563EB; 
+            --accent-dark: #1E40AF;  
+            --border-color: #E2E8F0;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --drawer-bg: rgba(255, 255, 255, 0.98);
+            --drawer-text: #0F172A;
+            --menu-hover-bg: rgba(37, 99, 235, 0.1); 
+        }
+
+        /* DARK MODE */
+        body.dark-mode {
+            --bg-color: #0B1120; 
+            --bg-secondary: #1E293B; 
+            --bg-card: #1E293B; 
+            --text-main: #F8FAFC; 
+            --text-muted: #94A3B8;
+            --accent-color: #3B82F6; 
+            --accent-dark: #60A5FA; 
+            --border-color: #334155;
+            --nav-bg: rgba(11, 17, 32, 0.95);
+            --drawer-bg: rgba(11, 17, 32, 0.98);
+            --drawer-text: #F8FAFC;
+            --menu-hover-bg: rgba(59, 130, 246, 0.15); 
+        }
+
+        /* RTL SUPPORT */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .ml-auto { margin-right: auto; margin-left: 0; }
+        [dir="rtl"] .mr-auto { margin-left: auto; margin-right: 0; }
+
+        @keyframes subtleZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        .animate-zoom { animation: subtleZoom 20s infinite alternate ease-in-out; }
+
+        /* === NAVBAR DESIGN (SOLID & CLEAN) === */
+        .navbar { 
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            background: var(--bg-card); 
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); 
+            padding: 14px 0; transition: all 0.3s ease;
+        }
+
+        .navbar::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent-color);
+        }
+        
+        /* === NAV LINK HOVER EFFECT (GLOWING DOT INDICATOR) === */
+        .nav-link { 
+            padding: 10px 8px; margin: 0 8px; 
+            color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; transition: color 0.3s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; 
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0px; left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 6px; height: 6px; border-radius: 50%;
+            background-color: var(--accent-color); box-shadow: 0 0 8px var(--accent-color);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); }
+        .nav-link:hover::after, .nav-link.active::after { transform: translateX(-50%) scale(1); }
+        
+        /* Dropdown */
+        .dropdown { position: relative; display: flex; align-items: center; height: 100%; }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; transform: translateY(15px); margin-top: 10px; opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 100; }
+        .dropdown-inner { 
+            background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid var(--accent-color); 
+            border-radius: 0 0 8px 8px; min-width: 220px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); padding: 8px; display: flex; flex-direction: column; gap: 4px; 
+        }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .dropdown-item { display: block; padding: 12px 16px; border-radius: 6px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s; text-align: left; white-space: nowrap; }
+        .dropdown-item:hover { background: var(--menu-hover-bg); color: var(--accent-color); padding-left: 20px; }
+        [dir="rtl"] .dropdown-item:hover { padding-left: 16px; padding-right: 20px; }
+
+        /* PILL TOGGLE */
+        .theme-toggle-pill { width: 52px; height: 26px; background: var(--bg-secondary); border-radius: 30px; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; border: 1px solid var(--border-color); }
+        .theme-toggle-pill i { font-size: 10px; z-index: 1; }
+        .theme-toggle-pill .fa-sun { color: #f59e0b; }
+        .theme-toggle-pill .fa-moon { color: #999; }
+        .theme-toggle-pill .thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
+        body.dark-mode .theme-toggle-pill .thumb { transform: translateX(26px); background: #333; }
+
+        /* RTL BUTTON STYLE */
+        .rtl-btn-style {
+            width: 44px; height: 26px; background: var(--bg-secondary); border-radius: 30px; border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; cursor: pointer;
+            color: var(--text-main); transition: all 0.3s ease;
+        }
+        .rtl-btn-style:hover { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+
+        /* === BUTTON DESIGN (PILL SHAPE & GLOW HOVER) === */
+        .btn { 
+            padding: 12px 28px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; 
+            border-radius: 50px; position: relative;
+        }
+        .btn-solid { background: var(--accent-color); color: #FFFFFF !important; border: 2px solid var(--accent-color); box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.2); }
+        .btn-solid:hover { background: var(--accent-dark); border-color: var(--accent-dark); transform: scale(1.03); box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.5); }
+        .btn-outline { border: 2px solid var(--accent-color); color: var(--accent-color); background: transparent; }
+        .btn-outline:hover { background: var(--accent-color); color: #FFFFFF !important; transform: scale(1.03); box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.4); }
+
+        /* MOBILE OVERLAY BACKGROUND */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(4px); }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+        /* HAMBURGER MENU */
+        .fullscreen-menu { 
+            position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: 100%; background: var(--drawer-bg); z-index: 1001; display: flex; flex-direction: column; 
+            opacity: 0; visibility: hidden; transform: scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); backdrop-filter: blur(20px);
+        }
+        .fullscreen-menu.active { opacity: 1; visibility: visible; transform: scale(1); }
+        .mobile-link { display: inline-block; width: auto; padding: 10px 0; font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text-main); text-decoration: none; transition: all 0.3s; text-align: center; }
+        .mobile-link:hover { color: var(--accent-color); transform: scale(1.05); }
+
+        /* FAQ ACCORDION STYLES */
+        .faq-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out, padding 0.3s ease-out;
+        }
+        .faq-content.open {
+            grid-template-rows: 1fr;
+            padding-top: 1rem;
+            padding-bottom: 1.25rem;
+        }
+        .faq-content > div { overflow: hidden; }
+
+        /* FOOTER */
+        footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding-top: 60px; }
+        footer h4 { color: var(--text-main); font-weight: 700; font-size: 1.1rem; margin-bottom: 20px; } 
+        footer a, footer li, footer span { color: var(--text-muted); text-decoration: none; transition: all 0.3s; font-size: 0.95rem; }
+        footer a:hover { color: var(--accent-color); }
+        .social-link-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; transition: all 0.3s; color: var(--text-main); background: var(--bg-card); }
+        .social-link-circle:hover { background: var(--accent-color); color: #FFFFFF; border-color: var(--accent-color); transform: translateY(-3px); }
+        .footer-bottom { border-top: 1px solid var(--border-color); padding: 24px 0; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+            <div class="flex items-center flex-1">
+                <a href="index.html" class="text-2xl font-black tracking-tighter block" style="color: var(--text-main); text-decoration: none;">
+                    TraditionalBrew
+                </a>
+            </div>
+            <div class="hidden xl:flex justify-center items-center gap-1">
+                <div class="dropdown">
+                    <div class="nav-link">Home <i class="fas fa-chevron-down text-[10px] ml-1 opacity-70"></i></div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-inner">
+                            <a href="index.html" class="dropdown-item">Home Page 1</a>
+                            <a href="home-2.html" class="dropdown-item">Home Page 2</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="faq.html" class="nav-link active">FAQ</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="dropdown">
+                    <div class="nav-link">Dashboard <i class="fas fa-chevron-down text-[10px] ml-1 opacity-70"></i></div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-inner">
+                            <a href="user.html" class="dropdown-item">User Dashboard</a>
+                            <a href="admin.html" class="dropdown-item">Admin Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden xl:flex items-center justify-end flex-1 gap-3">
+                <a href="login.html" class="btn btn-outline !py-2 !px-5 !text-[11px]">Login</a> 
+                <a href="register.html" class="btn btn-solid !py-2 !px-5 !text-[11px]">Register</a>
+                <div class="w-px h-6 bg-[var(--border-color)] mx-1"></div>
+                <div id="theme-toggle-desktop" class="theme-toggle-pill" title="Toggle Dark Mode">
+                    <i class="fas fa-sun"></i><i class="fas fa-moon"></i><div class="thumb"></div>
+                </div>
+                <button id="rtl-btn" class="rtl-btn-style" title="Toggle LTR/RTL">LTR</button>
+            </div>
+            <div class="xl:hidden flex items-center justify-end flex-1">
+                <button id="mobile-btn" class="w-10 h-10 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)] transition-all">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <div class="fullscreen-menu" id="fullscreen-menu">
+        <div class="w-full px-8 py-6 flex justify-between items-center shrink-0">
+            <a href="index.html" class="text-2xl font-black tracking-tighter block" style="color: var(--text-main); text-decoration: none;">
+                TraditionalBrew
+            </a>
+            <button id="close-menu" class="w-10 h-10 rounded-full border border-[var(--border-color)] flex items-center justify-center hover:border-[var(--accent-color)] hover:text-[var(--accent-color)] transition-all text-xl bg-[var(--bg-secondary)] text-[var(--text-main)]">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex flex-col items-center justify-start w-full overflow-y-auto flex-1 gap-2 pt-6 pb-8">
+            <a href="index.html" class="mobile-link">Home Page 1</a>
+            <a href="home-2.html" class="mobile-link">Home Page 2</a>
+            <a href="about.html" class="mobile-link">About</a>
+            <a href="services.html" class="mobile-link">Services</a>
+            <a href="pricing.html" class="mobile-link">Pricing</a>
+            <a href="blog.html" class="mobile-link">Blog</a>
+            <a href="faq.html" class="mobile-link" style="color: var(--accent-color);">FAQ</a>
+            <a href="contact.html" class="mobile-link">Contact</a>
+            <div class="w-16 h-px bg-[var(--border-color)] my-4"></div>
+            <span class="text-[10px] font-bold text-[var(--accent-color)] uppercase tracking-widest mb-1">Portals</span>
+            <a href="user.html" class="mobile-link !text-lg !font-semibold text-[var(--text-muted)]">User Dashboard</a>
+            <a href="admin.html" class="mobile-link !text-lg !font-semibold text-[var(--text-muted)]">Admin Dashboard</a>
+        </div>
+        <div class="w-full px-8 py-8 border-t border-[var(--border-color)] flex flex-col gap-6 shrink-0 bg-[var(--bg-secondary)]">
+            <div class="flex justify-between items-center w-full max-w-sm mx-auto">
+                <div class="flex items-center gap-3">
+                    <span class="text-[var(--text-muted)] font-bold text-[10px] uppercase tracking-widest">Theme</span>
+                    <div id="theme-toggle-mobile" class="theme-toggle-pill"><i class="fas fa-sun"></i><i class="fas fa-moon"></i><div class="thumb"></div></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[var(--text-muted)] font-bold text-[10px] uppercase tracking-widest">Dir</span>
+                    <button id="rtl-toggle-mobile" class="rtl-btn-style">LTR</button>
+                </div>
+            </div>
+            <div class="flex gap-4 w-full max-w-sm mx-auto">
+                <a href="login.html" class="btn btn-outline flex-1 !py-3">Login</a>
+                <a href="register.html" class="btn btn-solid flex-1 !py-3">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <section class="relative w-full min-h-[100dvh] lg:h-[100dvh] pt-28 lg:pt-24 pb-12 lg:pb-8 flex items-center bg-[var(--bg-color)] overflow-hidden">
+        <div class="absolute top-1/4 right-0 w-[40%] h-[70%] bg-[var(--accent-color)] opacity-[0.03] rounded-l-full blur-3xl z-0 pointer-events-none hidden lg:block"></div>
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center relative z-10 mt-6 lg:mt-0">
+            <div class="flex flex-col items-start text-left justify-center lg:h-full">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-color)]/10 border border-[var(--accent-color)]/20 text-[var(--accent-color)] text-[10px] font-bold uppercase tracking-widest mb-4">
+                    <i class="fas fa-question-circle"></i> Help & Support
+                </div>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] mb-4 text-[var(--text-main)] tracking-tight">
+                    Frequently Asked <br class="hidden lg:block">
+                    <span style="color: var(--accent-color);">Questions</span>.
+                </h1>
+                <p class="text-[var(--text-muted)] text-sm sm:text-base md:text-lg leading-relaxed max-w-lg font-medium mb-6 lg:mb-8">
+                    Find answers to common questions about our brewery tours, sake tastings, shipping policies, and reservation details.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+                    <a href="#faq-list" class="btn btn-solid group !py-3 sm:!py-4 !px-6 sm:!px-8 text-xs sm:text-sm flex justify-center items-center gap-3">
+                        <span>Browse FAQs</span>
+                        <i class="fas fa-arrow-down transition-transform group-hover:translate-y-1"></i>
+                    </a>
+                    <a href="contact.html" class="btn btn-outline w-full sm:w-auto !py-3 sm:!py-4 !px-6 sm:!px-8 text-xs sm:text-sm transition-all flex justify-center items-center gap-2">
+                        <i class="fas fa-envelope text-[var(--accent-color)]"></i> Contact Us
+                    </a>
+                </div>
+            </div>
+            <div class="relative w-full h-[40vh] sm:h-[50vh] lg:h-[70vh] flex items-center justify-center mt-6 lg:mt-0">
+                <div class="relative w-full h-full max-h-[600px] rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-2xl border-4 border-[var(--bg-card)]">
+                    <img src="images/pexels-cottonbro-5532997.jpg" alt="FAQ Support" class="w-full h-full object-cover animate-zoom" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--text-main)]/60 to-transparent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq-list" class="py-24 bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
+        <div class="max-w-4xl mx-auto px-6 lg:px-12">
+            
+            <div class="mb-16">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white text-lg shadow-md">
+                        <i class="fas fa-wine-glass-alt"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black text-[var(--text-main)] tracking-tight">
+                        Tasting Room & Tours
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">Do I need a reservation for a tasting?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Walk-ins are welcome for our standard tasting flights. However, for private cellar tours and guided omakase pairings, we highly recommend booking at least 48 hours in advance to secure your spot.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">How long does a cellar tour take?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Our guided cellar tours typically last around 45 to 60 minutes. This includes a walkthrough of our historic brewing facilities, a detailed explanation of the brewing process, and concludes with a guided tasting session.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">Can children or minors attend the tour?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>While the tasting room is strictly restricted to visitors of legal drinking age (20+ in Japan), minors accompanied by an adult are welcome to join the historical and educational portion of the brewery tour.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">Do you serve food at the brewery?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>We offer small artisanal snacks like local cheese, cured meats, and crackers that pair perfectly with our sake. However, we do not operate a full-service restaurant. We can recommend excellent local dining options nearby!</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">Is the brewery wheelchair accessible?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Yes, our main tasting hall, retail shop, and the first floor of our historical kura are fully wheelchair accessible. Please let us know in advance if you require any specific accommodations during your tour.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white text-lg shadow-md">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black text-[var(--text-main)] tracking-tight">
+                        Purchasing & Shipping
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">Do you ship sake internationally?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Yes, we partner with specialized international couriers to ship our sake to over 30 countries worldwide. Shipping rates and customs regulations vary depending on the destination country.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">How should I store my sake once purchased?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Standard pasteurized sake should be stored upright in a cool, dark place away from direct sunlight. Unpasteurized sake (Namazake) is highly sensitive and must be kept refrigerated at all times.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">What is your return policy?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Due to the delicate and perishable nature of our products, we cannot accept returns on opened bottles. If a bottle arrives damaged or compromised, please contact our support team within 48 hours for a replacement.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">How long does an unopened bottle last?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Generally, unopened pasteurized sake should be consumed within 10 to 12 months of the brewing date printed on the label. Once opened, we recommend finishing the bottle within 2 to 3 weeks for optimal flavor.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--accent-color)] transition-colors duration-300 shadow-sm">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none cursor-pointer">
+                            <span class="font-bold text-[var(--text-main)] text-sm sm:text-base">Do you offer bulk discounts for weddings or events?</span>
+                            <div class="faq-icon w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--accent-color)] shrink-0 transition-transform duration-300">
+                                <i class="fas fa-plus text-sm"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content px-6 text-[var(--text-muted)] text-sm leading-relaxed border-t border-[var(--border-color)] border-opacity-0 transition-all duration-300">
+                            <div>Yes! We offer special pricing and customizable labels for weddings, corporate events, and large parties. Please reach out to our wholesale team via the Contact page to discuss your event requirements.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10 pt-4">
+                <div class="lg:col-span-4">
+                    <a href="index.html" class="text-2xl font-black tracking-tighter block mb-6" style="color: var(--text-main); text-decoration: none;">
+                        TraditionalBrew
+                    </a>
+                    <p class="opacity-80 leading-relaxed text-sm mb-6 max-w-sm" style="color: var(--text-muted);">
+                        Connecting sake enthusiasts with heritage craftsmanship. Experience the purity of our local rice and pristine water in every carefully brewed drop.
+                    </p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="social-link-circle"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h4>Guest Portal</h4>
+                            <ul class="space-y-3">
+                                <li><a href="login.html">Member Login</a></li>
+                                <li><a href="user.html">Dashboard</a></li>
+                                <li><a href="#">My Reservations</a></li>
+                                <li><a href="pricing.html">Tasting Menu</a></li>
+                                <li><a href="faq.html">Brewery Etiquette</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Our Experiences</h4>
+                            <ul class="space-y-3">
+                                <li><a href="services.html">Cellar Tours</a></li>
+                                <li><a href="services.html">Sake Flights</a></li>
+                                <li><a href="services.html">Pairing Dinners</a></li>
+                                <li><a href="services.html">Private Events</a></li>
+                                <li><a href="services.html">Masterclasses</a></li>
+                            </ul>
+                        </div>
+                        <div class="sm:col-span-2 md:col-span-1">
+                            <h4>Brewery Support</h4>
+                            <ul class="space-y-3 text-[var(--text-muted)] text-sm">
+                                <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt mt-1 shrink-0" style="color: var(--accent-color);"></i><span>108-4 Kuramachi<br>Kyoto District, 604-8000</span></li>
+                                <li class="flex items-center gap-3"><i class="fas fa-phone shrink-0" style="color: var(--accent-color);"></i><a href="tel:+81755550100" class="break-all">+81-75-555-0100</a></li>
+                                <li class="flex items-center gap-3"><i class="fas fa-envelope shrink-0" style="color: var(--accent-color);"></i><a href="contact.html" class="break-all">kampai@traditionalbrew.jp</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom flex flex-col md:flex-row justify-between items-center text-sm gap-4">
+                <p style="color: var(--text-muted);">&copy; 2026 TraditionalBrew Sake Brewery & Tasting Room. All rights reserved.</p>
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Brewing Standards</a>
+                    <a href="#">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileBtn = document.getElementById('mobile-btn'); 
+        const fullscreenMenu = document.getElementById('fullscreen-menu'); 
+        const closeMenu = document.getElementById('close-menu'); 
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        
+        function toggleMenu() { 
+            fullscreenMenu.classList.toggle('active'); 
+            drawerOverlay.classList.toggle('active');
+            document.body.style.overflow = fullscreenMenu.classList.contains('active') ? 'hidden' : 'auto';
+        }
+        
+        mobileBtn.onclick = toggleMenu; 
+        closeMenu.onclick = toggleMenu; 
+        drawerOverlay.onclick = toggleMenu; 
+        
+        const themeDesktop = document.getElementById('theme-toggle-desktop');
+        const themeMobile = document.getElementById('theme-toggle-mobile'); 
+        const theme = localStorage.getItem('theme') || 'light';
+
+        function updateThemeUI(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode'); 
+                if(themeMobile) themeMobile.classList.add('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                if(themeMobile) themeMobile.classList.remove('active');
+            }
+        }
+        
+        updateThemeUI(theme === 'dark');
+        
+        function toggleTheme() { 
+            const isDark = !document.body.classList.contains('dark-mode');
+            updateThemeUI(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light'); 
+        }
+        
+        themeDesktop.onclick = toggleTheme; 
+        if(themeMobile) themeMobile.onclick = toggleTheme;
+        
+        // RTL Logic
+        const rtlBtn = document.getElementById('rtl-btn'); 
+        const rtlMobile = document.getElementById('rtl-toggle-mobile'); 
+        const dir = localStorage.getItem('dir') || 'ltr';
+        
+        function updateRTLUI(currentDir) {
+            const isRTL = currentDir === 'rtl';
+            if (rtlBtn) rtlBtn.innerText = isRTL ? 'RTL' : 'LTR';
+            if (rtlMobile) rtlMobile.innerText = isRTL ? 'RTL' : 'LTR';
+        }
+
+        if (dir === 'rtl') { 
+            document.documentElement.dir = 'rtl'; 
+        }
+        updateRTLUI(dir);
+        
+        function toggleRTL() { 
+            const isRTL = document.documentElement.dir === 'rtl'; 
+            const newDir = isRTL ? 'ltr' : 'rtl';
+            document.documentElement.dir = newDir; 
+            localStorage.setItem('dir', newDir); 
+            updateRTLUI(newDir);
+        }
+        
+        if (rtlBtn) rtlBtn.onclick = toggleRTL; 
+        if (rtlMobile) rtlMobile.onclick = toggleRTL;
+
+        // FAQ Accordion Logic
+        const faqButtons = document.querySelectorAll('.faq-btn');
+        
+        faqButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const content = btn.nextElementSibling;
+                const icon = btn.querySelector('.faq-icon i');
+                const isOpen = content.classList.contains('open');
+                
+                // Close all other open FAQs (Optional: remove this block to allow multiple open at once)
+                document.querySelectorAll('.faq-content.open').forEach(openContent => {
+                    if (openContent !== content) {
+                        openContent.classList.remove('open');
+                        openContent.classList.remove('border-opacity-100');
+                        openContent.previousElementSibling.querySelector('.faq-icon i').classList.replace('fa-minus', 'fa-plus');
+                        openContent.previousElementSibling.querySelector('.faq-icon').classList.remove('bg-[var(--accent-color)]', 'text-white');
+                        openContent.previousElementSibling.querySelector('.faq-icon').classList.add('bg-[var(--bg-secondary)]', 'text-[var(--accent-color)]');
+                    }
+                });
+
+                // Toggle current FAQ
+                if (isOpen) {
+                    content.classList.remove('open');
+                    content.classList.remove('border-opacity-100');
+                    icon.classList.replace('fa-minus', 'fa-plus');
+                    btn.querySelector('.faq-icon').classList.remove('bg-[var(--accent-color)]', 'text-white');
+                    btn.querySelector('.faq-icon').classList.add('bg-[var(--bg-secondary)]', 'text-[var(--accent-color)]');
+                } else {
+                    content.classList.add('open');
+                    content.classList.add('border-opacity-100');
+                    icon.classList.replace('fa-plus', 'fa-minus');
+                    btn.querySelector('.faq-icon').classList.remove('bg-[var(--bg-secondary)]', 'text-[var(--accent-color)]');
+                    btn.querySelector('.faq-icon').classList.add('bg-[var(--accent-color)]', 'text-white');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
